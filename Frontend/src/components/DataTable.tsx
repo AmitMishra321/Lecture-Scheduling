@@ -21,7 +21,7 @@ interface DataTableProps {
   handleAttendance?: (id: string, status: string) => void;
 }
 
-export function DataTable({ columns, data, handleDelete, handleAttendance }: DataTableProps) {
+export function DataTable({ columns, data, handleDelete, handleAttendance, onEdit }: DataTableProps) {
   return (
     <div className="rounded-md border">
       <Table>
@@ -34,7 +34,7 @@ export function DataTable({ columns, data, handleDelete, handleAttendance }: Dat
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((row, i) => (
+          {data.length > 0 ? data.map((row, i) => (
             <TableRow key={i}>
               {columns.map((column) => (
                 <TableCell key={column.key}>
@@ -56,15 +56,17 @@ export function DataTable({ columns, data, handleDelete, handleAttendance }: Dat
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     {/* Edit Action */}
-                    {/* <DropdownMenuItem onClick={() => handleEdit(row)}>Edit</DropdownMenuItem> */}
+                    {onEdit &&
+                      <DropdownMenuItem onClick={() => onEdit(row)}>Edit</DropdownMenuItem>
+                    }
                     {/* Delete Action */}
                     {handleDelete &&
                       <DropdownMenuItem onClick={() => handleDelete?.(row._id)} className="text-red-600">
                         Delete
                       </DropdownMenuItem>
                     }
-                    {handleAttendance &&<>
-              
+                    {handleAttendance && <>
+
                       <DropdownMenuItem onClick={() => handleAttendance?.(row._id, `${row.attendance === "Attended" ? "Not Attended" : "Attended"}`)} >
                         {row.attendance === "Attended" ? "Not Attended" : "Attended"}
                       </DropdownMenuItem>
@@ -74,7 +76,13 @@ export function DataTable({ columns, data, handleDelete, handleAttendance }: Dat
                 </DropdownMenu>
               </TableCell>
             </TableRow>
-          ))}
+          )) : (
+            <TableRow>
+              <TableCell colSpan={4} className="text-center text-gray-500">
+                No Data Found
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
     </div>

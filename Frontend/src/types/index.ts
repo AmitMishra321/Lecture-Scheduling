@@ -1,19 +1,19 @@
 export interface Instructor {
-  id: number;
+  _id: string;
   name: string;
   phone: string;
   email: string;
 }
 
 export interface Course {
-  id: number;
+  id: string;
   name: string;
   level: string;
   description: string;
 }
 
 export interface Lecture {
-  id: number;
+  id: string;
   instructorName: string;
   courseName: string;
   date: string;

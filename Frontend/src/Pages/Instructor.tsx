@@ -62,29 +62,38 @@ import { DataTable } from '@/components/DataTable'
 import { Header } from '@/components/Header'
 import InstructorFormModal from '@/components/instructor-form-modal';
 import { Sidebar } from '@/components/Sidebar'
-import {  useDeleteInstructorMutation, useGetAllInstructorsQuery } from '@/store/slices/instructorApi';
+import { useDeleteInstructorMutation, useGetAllInstructorsQuery } from '@/store/slices/instructorApi';
+import { Instructor } from '@/types';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
 
 function InstructorPage() {
   const { data: instructors = [], refetch } = useGetAllInstructorsQuery();
-  const[deleteInstructor]=useDeleteInstructorMutation()
+  const [deleteInstructor] = useDeleteInstructorMutation()
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // const [editData, setEditData] = useState<Instructor | null>(null);
+  const [editData, setEditData] = useState<Instructor | undefined>(undefined);
 
   const handleOpenModal = () => {
     // setEditData(null);
     setIsModalOpen(true);
   }
+  const handleEdit = (data: Instructor) => {
 
-  const handleEdit = () => {
-    // setEditData(instructor);
+    const formattedData: Instructor = {
+      _id: String(data._id),
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+    };
+
+    setEditData(formattedData);
     setIsModalOpen(true);
-  }
+  };
 
   const handleCloseModal = () => {
     refetch();
+    setEditData(undefined)
     setIsModalOpen(false);
   }
 
@@ -129,6 +138,7 @@ function InstructorPage() {
       <InstructorFormModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
+        defaultValues={editData}
       />
     </div>
   )

@@ -54,7 +54,7 @@ function Course() {
               addButtonLabel="Add Courses"
               onAdd={handleOpenModal}
             />
-            <DataTable columns={courseColumns} data={courses || []} onEdit={handleOpenModal} handleDelete={handleDelete} />
+            <DataTable columns={courseColumns} data={courses || []} handleDelete={handleDelete} />
           </section>
         </div>
       </div>

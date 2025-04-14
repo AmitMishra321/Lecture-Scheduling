@@ -178,7 +178,7 @@
 
 
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -187,7 +187,8 @@ import {
 } from "@/components/ui/dialog";
 import {
   useCreateInstructorMutation,
-  // useUpdateInstructorMutation
+  useUpdateInstructorMutation,
+ 
 } from "@/store/slices/instructorApi";
 import { toast } from "sonner";
 
@@ -203,7 +204,7 @@ interface InstructorFormModalProps {
   };
 }
 
-export default function InstructorFormModal({ isOpen, onClose }: InstructorFormModalProps) {
+export default function InstructorFormModal({ isOpen, onClose, defaultValues }: InstructorFormModalProps) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -212,19 +213,19 @@ export default function InstructorFormModal({ isOpen, onClose }: InstructorFormM
   });
 
   const [createInstructor] = useCreateInstructorMutation();
-  // const [updateInstructor] = useUpdateInstructorMutation();
+  const [updateInstructor] = useUpdateInstructorMutation();
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
 
-  // useEffect(() => {
-  //   if (defaultValues) {
-  //     setFormData({
-  //       name: defaultValues.name || '',
-  //       email: defaultValues.email || '',
-  //       phone: defaultValues.phone || '',
-  //       password: '',
-  //     });
-  //   }
-  // }, [defaultValues]);
+  useEffect(() => {
+    if (defaultValues) {
+      setFormData({
+        name: defaultValues.name || '',
+        email: defaultValues.email || '',
+        phone: defaultValues.phone || '',
+        password: '',
+      });
+    }
+  }, [defaultValues]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -235,21 +236,22 @@ export default function InstructorFormModal({ isOpen, onClose }: InstructorFormM
     e.preventDefault();
     setFieldErrors({});
     try {
-    //   if (defaultValues?._id) {
-    //     const updatePayload = { ...formData };
-    //     // Remove password if it's not provided
-    //     if (!formData.password) {
-    //       delete updatePayload.password;
-    //     }
-        
-    //     // Send update request
-    //     await updateInstructor({ id: defaultValues._id, data: updatePayload }).unwrap();
-    //     toast.success("Instructor updated successfully");
-    //   } else {
+      if (defaultValues?._id) {
+        const updatePayload = { ...formData };
+        // Send update request
+        await updateInstructor({ id: defaultValues._id, data: updatePayload }).unwrap();
+        toast.success("Instructor updated successfully");
+      } else {
         await createInstructor({ ...formData, role: 'instructor' }).unwrap();
         toast.success("Instructor created successfully");
-      // }
+      }
       onClose();
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        password: '',
+      })
     } catch (error: any) {
       const errors = error?.data?.errors;
       if (errors) {
@@ -289,17 +291,17 @@ export default function InstructorFormModal({ isOpen, onClose }: InstructorFormM
             {fieldErrors.phone && <p className="text-sm text-red-600">{fieldErrors.phone[0]}</p>}
           </div>
 
-          {/* {!defaultValues?._id && ( */}
-            <div className="space-y-2">
-              <Label htmlFor="password">Password<span className="text-red-500">*</span></Label>
-              <Input name="password" value={formData.password} onChange={handleInputChange} required type="password" />
-              {fieldErrors.password && <p className="text-sm text-red-600">{fieldErrors.password[0]}</p>}
-            </div>
-          {/* )} */}
+          {!defaultValues?._id && (
+          <div className="space-y-2">
+            <Label htmlFor="password">Password<span className="text-red-500">*</span></Label>
+            <Input name="password" value={formData.password} onChange={handleInputChange} required type="password" />
+            {fieldErrors.password && <p className="text-sm text-red-600">{fieldErrors.password[0]}</p>}
+          </div>
+          )} 
 
           <DialogFooter>
             <Button type="submit" className="bg-blue-600 text-white px-6">
-              {/* {defaultValues ? "Update" : "Add"} */} Add
+              {defaultValues ? "Update" : "Add"} 
             </Button>
           </DialogFooter>
         </form>

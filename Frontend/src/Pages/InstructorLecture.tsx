@@ -3,19 +3,30 @@ import { Header } from '@/components/Header'
 import { Sidebar } from '@/components/Sidebar'
 import { RootState } from '@/store';
 import { useGetInstructorLecturesQuery, useUpdateAttendanceMutation } from '@/store/slices/lectureApi';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { toast } from 'sonner';
 
 
 function MyLecture() {
     const { userId } = useSelector((state: RootState) => state.auth)
+    const [filters, setFilters] = useState({
+        courseName: '',
+        date: '',
+        attendance: '',
+    });
     const { data: lectures, refetch } = useGetInstructorLecturesQuery({
         instructorId: userId as string,
+        ...filters
 
     });
-    console.log('lec', lectures)
+
     const [updateAttendance] = useUpdateAttendanceMutation()
+
+
+    const handleFilterChange = (key: string, value: string) => {
+        setFilters((prev) => ({ ...prev, [key]: value }));
+    };
 
 
     const lectureColumns = [
@@ -64,7 +75,8 @@ function MyLecture() {
                         <Header
                             title="Lectures"
                             addButtonLabel="Add Lectures"
-
+                            filters={filters}
+                            onFilterChange={handleFilterChange}
                         />
                         <DataTable columns={lectureColumns} data={formattedLectures || []} handleAttendance={handleAttendance} />
                     </section>

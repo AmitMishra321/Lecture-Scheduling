@@ -1,17 +1,19 @@
+import { useMemo, useState } from 'react';
 import { DataTable } from '@/components/DataTable'
 import { Header } from '@/components/Header'
 import { Sidebar } from '@/components/Sidebar'
 import { useGetAllLecturesQuery } from '@/store/slices/lectureApi';
-import { useMemo, useState } from 'react';
 import LectureFormModal from '@/components/lecture-form-modal';
 
 
 function Lecture() {
 
     const { data: lectures, refetch } = useGetAllLecturesQuery();
-    
-    const [isModalOpen, setIsModalOpen] = useState(false)
 
+    const [isModalOpen, setIsModalOpen] = useState(false)
+   
+
+ 
     const lectureColumns = [
         { key: 'instructorName', label: 'Instructor Name' },
         { key: 'courseName', label: 'Course Name' },
@@ -41,7 +43,7 @@ function Lecture() {
             date: new Date(lecture.date).toLocaleDateString("en-GB"), // Format: DD/MM/YYYY
             startTime: lecture.startTime,
             duration: lecture.duration,
-           
+
         }));
     }, [lectures]);
     return (
@@ -56,8 +58,9 @@ function Lecture() {
                             title="Lectures"
                             addButtonLabel="Add Lectures"
                             onAdd={handleOpenModal}
+                          
                         />
-                        <DataTable columns={lectureColumns} data={formattedLectures || []} onEdit={handleOpenModal}  />
+                        <DataTable columns={lectureColumns} data={formattedLectures || []} />
                     </section>
                 </div>
             </div>
